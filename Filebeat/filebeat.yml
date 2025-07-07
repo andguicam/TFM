@@ -1,0 +1,27 @@
+filebeat.inputs:
+  - type: mqtt
+    hosts:
+      - tcp://10.0.0.10:1883
+    topics:
+      - empresa/flota/spain/
+
+processors:
+  - decode_json_fields:
+      fields: ["message"]
+      target: "data"
+      overwrite_keys: true
+
+  - convert:
+      fields:
+        - { from: "data.speed", type: float, ignore_missing: true }
+        - { from: "data.location.lat", type: float, ignore_missing: true }
+        - { from: "data.location.lon", type: float, ignore_missing: true }
+
+  - drop_fields:
+      fields: ["message"]
+
+output.elasticsearch:
+  hosts: ["https://10.0.0.20:9200"]
+  api_key: "BEAT_TOKEN"
+  ssl:
+    verification_mode: "none"

@@ -1,0 +1,19 @@
+services:
+  emqx:
+    image: emqx/emqx:5.8.6
+    container_name: emqx_node1
+    restart: unless-stopped
+    network_mode: "host"
+    environment:
+      - EMQX_NODE_NAME=emqx-1@10.0.0.100
+      - EMQX_CLUSTER__DISCOVERY_STRATEGY=static
+      - EMQX_CLUSTER__STATIC__SEEDS=[emqx-2@10.0.0.101,emqx-3@10.0.0.102]
+      - EMQX_NODE__COOKIE=supersecretcookie123
+      - EMQX_NAME=node1
+    volumes:
+      - emqx_data:/opt/emqx/data
+      - emqx_log:/opt/emqx/log
+
+volumes:
+  emqx_data:
+  emqx_log:
